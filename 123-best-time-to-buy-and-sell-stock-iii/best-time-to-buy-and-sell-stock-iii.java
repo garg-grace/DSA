@@ -1,18 +1,20 @@
 class Solution {
     public int maxProfit(int[] prices) {
         int n = prices.length;
-        int[][] dp = new int[n+1][5];
+        int[] after = new int[5];
+        int[] curr = new int[5];
 
         for(int ind=n-1;ind>=0;ind--){
             for(int trans=3;trans>=0;trans--){
                 if(trans%2==0){
-                    dp[ind][trans]=Math.max(-prices[ind]+dp[ind+1][trans+1],dp[ind+1][trans]);
+                    curr[trans]=Math.max(-prices[ind]+after[trans+1],after[trans]);
                 }else{
-                    dp[ind][trans]=Math.max(prices[ind]+dp[ind+1][trans+1],dp[ind+1][trans]);
+                    curr[trans]=Math.max(prices[ind]+after[trans+1],after[trans]);
                 }
             }
+            after=curr;
         }
         
-        return dp[0][0];
+        return after[0];
     }
 }
