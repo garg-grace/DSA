@@ -1,20 +1,20 @@
 class Solution {
-    private int f(int ind,int buy,int n,int[] prices,int[][] dp){
-        if(ind==n) return 0;
-        if(dp[ind][buy]!=-1) return dp[ind][buy];
-        int profit=0;
-        if(buy==1){
-            profit=Math.max(-prices[ind]+f(ind+1,0,n,prices,dp),f(ind+1,1,n,prices,dp));
-        }else{
-            profit=Math.max(prices[ind]+f(ind+1,1,n,prices,dp),f(ind+1,0,n,prices,dp));
-        }
-        return dp[ind][buy]=profit;
-    }
     public int maxProfit(int[] prices) {
         int n = prices.length;
-        int[][] dp = new int[n][2];
-        for(int i=0;i<n;i++) Arrays.fill(dp[i],-1);
+        int[][] dp = new int[n+1][2];
+        dp[n][0]=dp[n][1]=0;
+        for(int i=n-1;i>=0;i--){
+            for(int buy=0;buy<=1;buy++){
+                int profit=0;
+                if(buy==1){
+                    profit = Math.max(-prices[i]+dp[i+1][0],dp[i+1][1]);
+                }else{
+                    profit = Math.max(prices[i]+dp[i+1][1],dp[i+1][0]);
+                }
+                dp[i][buy]=profit;
+            }
+        }
 
-        return f(0,1,n,prices,dp);
+        return dp[0][1];
     }
 }
