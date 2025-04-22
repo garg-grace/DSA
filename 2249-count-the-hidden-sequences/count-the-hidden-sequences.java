@@ -1,11 +1,17 @@
 class Solution {
-public int numberOfArrays(int[] diff, int lower, int upper) {
-    long a = 0, maxima = 0, minima = 0;
-    for (int i = 0; i < diff.length; i++) {
-        a += diff[i];
-        maxima = Math.max(maxima, a);
-        minima = Math.min(minima, a);
+    public int numberOfArrays(int[] differences, int lower, int upper) {
+        //suppose first val of arr to 0 and min and maxval in arr
+        int curr=0,mini=0,maxi=0;
+
+        for(int d:differences){
+            curr+=d;
+
+            maxi=Math.max(maxi,curr);
+            mini=Math.min(mini,curr);
+
+            if(((upper-maxi)-(lower-mini)+1)<=0) return 0;
+        }
+
+        return (upper-maxi)-(lower-mini)+1;        
     }
-    return (int) Math.max(0, (upper - lower) - (maxima - minima) + 1);
-}
 }
