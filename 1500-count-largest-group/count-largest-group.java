@@ -1,25 +1,20 @@
 class Solution {
-    private int calculateDigitSum(int num){
-        int sum=0;
-        while(num>0){
-            sum+=num%10;
-            num/=10;
-        }
-        return sum;
-    }
     public int countLargestGroup(int n) {
-        Map<Integer,Integer> mp = new HashMap<>();
-        int maxi=0;
-        for(int i=1;i<=n;i++){
-            int digitSum = calculateDigitSum(i);
-            mp.put(digitSum,mp.getOrDefault(digitSum,0)+1);
-            maxi=Math.max(maxi,mp.get(digitSum));
+        int[] cnt = new int[37];
+        int ans = 0, mx = 0;
+        for (int i = 1; i <= n; ++i) {
+            int s = 0;
+            for (int x = i; x > 0; x /= 10) {
+                s += x % 10;
+            }
+            ++cnt[s];
+            if (mx < cnt[s]) {
+                mx = cnt[s];
+                ans = 1;
+            } else if (mx == cnt[s]) {
+                ++ans;
+            }
         }
-
-        int cnt=0;
-        for(Map.Entry<Integer,Integer> it:mp.entrySet()){
-            if(it.getValue()==maxi) cnt++;
-        }
-        return cnt;
+        return ans;
     }
 }
