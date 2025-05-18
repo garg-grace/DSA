@@ -1,39 +1,56 @@
 class Solution {
+    int mod = 1_000_000_007;
+    List<String> columnStates = new ArrayList<>();
+    char[] colours = {'R','G','B'};
+    int[][] dp;
+    private void generateColumnStates(String curr,char prevChar,int l,int m){
+        if(l==m){
+            columnStates.add(new String(curr));
+            return;
+        }
+        for(char ch:colours){
+            if(ch==prevChar) continue;
+
+            generateColumnStates(curr+ch,ch,l+1,m);
+        }
+    }
+    private int solve(int remainingCols,int prevIdx,int m){
+        if(remainingCols==0) return 1;
+        if(dp[remainingCols][prevIdx]!=-1) return dp[remainingCols][prevIdx];
+
+        int ways=0;
+        String prevState = columnStates.get(prevIdx);
+
+        for(int i=0;i<columnStates.size();i++){
+            if(i==prevIdx) continue;
+            String currState = columnStates.get(i);
+            boolean valid = true;
+
+            for(int j=0;j<m;j++){
+                if(prevState.charAt(j)==currState.charAt(j)){
+                    valid = false;
+                    break;
+                }
+            }
+
+            if(valid == true){
+                ways = (ways + solve(remainingCols-1,i,m))%mod;
+            }
+        }
+        return dp[remainingCols][prevIdx] = ways;
+    }
     public int colorTheGrid(int m, int n) {
-        final int mod = 1_000_000_007;
-        int total = 1;
-        for (int i = 0; i < m; i++) total *= 3;
-        
-        int[][] dp = new int[n+1][total];
-        int[][] rowValid = new int[total][total];
-        List<Integer> good = new ArrayList<>();
-        List<Integer>[] pattern = new ArrayList[total];
-        for (int i = 0; i < total; i++) pattern[i] = new ArrayList<>();
-        for (int i = 0; i < total; i++) {
-            int val = i, valid = 1;
-            for (int j = 0; j < m; j++) {
-                pattern[i].add(val % 3);
-                val /= 3;
-            }
-            for (int j = 1; j < m; j++) if (pattern[i].get(j).equals(pattern[i].get(j-1))) valid = 0;
-            if (valid == 1) good.add(i);
+
+        generateColumnStates("",'#',0,m);
+
+        dp = new int[n+1][columnStates.size()];
+        for(int i=0;i<=n;i++) Arrays.fill(dp[i],-1);
+
+        int result = 0;
+        for(int i=0;i<columnStates.size();i++){
+            result = (result + solve(n-1,i,m))%mod; 
         }
-        for (int i : good) dp[1][i] = 1;
-        for (int i : good) {
-            for (int j : good) {
-                rowValid[i][j] = 1;
-                for (int k = 0; k < m; k++) if (pattern[i].get(k).equals(pattern[j].get(k))) rowValid[i][j] = 0;
-            }
-        }
-        for (int col = 2; col <= n; col++) {
-            for (int i : good) {
-                long sum = 0;
-                for (int j : good) if (rowValid[i][j] == 1) sum += dp[col-1][j];
-                dp[col][i] = (int)(sum % mod);
-            }
-        }
-        long ans = 0;
-        for (int i = 0; i < total; i++) ans += dp[n][i];
-        return (int)(ans % mod);
+
+        return result;        
     }
 }
