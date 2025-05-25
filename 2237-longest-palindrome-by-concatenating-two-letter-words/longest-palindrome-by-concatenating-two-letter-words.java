@@ -1,36 +1,26 @@
 class Solution {
     public int longestPalindrome(String[] words) {
-        HashMap<String,Integer> mp = new HashMap<>();
-        int n = words.length;
-        for(int i=0;i<n;i++){
-            mp.put(words[i],mp.getOrDefault(words[i],0)+1);
-        }
+        int[][] dp = new int[26][26];
+        int len=0;
 
-        int res=0;
-        Boolean sameCharOdd=false;
-        for(Map.Entry<String,Integer> it:mp.entrySet()){
-            String st = it.getKey();
-            int cnt = it.getValue();
+        for(String word:words){
+            int i = word.charAt(0)-'a';
+            int j = word.charAt(1)-'a';
 
-            String revStr = ""+st.charAt(1)+st.charAt(0);
-            if(st.charAt(0)==st.charAt(1)){
-                if(cnt%2==0){
-                    res+=cnt;
-                }else{
-                    if(sameCharOdd==false){
-                        res+=cnt;
-                        sameCharOdd=true;
-                    }else res+=(cnt-1);                    
-                }
+            if(dp[j][i]>0){
+                len+=4;
+                dp[j][i]--;
             }else{
-                if(mp.containsKey(revStr)){
-                    int revCnt = mp.get(revStr);
-                    int temp = Math.min(cnt,revCnt);
-                    res+=2*temp;
-                    mp.put(revStr,0);
-                }
+                dp[i][j]++;
             }
         }
-        return res*2;
+
+        for(int i=0;i<26;i++){
+            if(dp[i][i]>0){
+                len+=2;
+                break;
+            }
+        }
+        return len;
     }
 }
