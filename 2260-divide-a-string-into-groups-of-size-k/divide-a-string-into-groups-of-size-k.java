@@ -8,7 +8,7 @@ class Solution {
         for(int i=0;i<n;i+=k){
             String temp = (i+k<n+1)?s.substring(i,i+k):s.substring(i);
             if(i+k>n){
-                while(temp.length()<k) temp+=fill;
+                temp+=String.valueOf(fill).repeat(k-temp.length());
             }
             res[i/k]=temp;
         }
