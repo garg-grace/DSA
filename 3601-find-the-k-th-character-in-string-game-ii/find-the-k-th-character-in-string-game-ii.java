@@ -1,18 +1,23 @@
 class Solution {
-
     public char kthCharacter(long k, int[] operations) {
-        int res = 0;
-        int bitIndex;
-        while (k != 1) {
-            bitIndex = 63 - Long.numberOfLeadingZeros(k);
-            if ((1L << bitIndex) == k) {
-                bitIndex--;
-            }
-            k = k - (1L << bitIndex);
-            if (operations[bitIndex] != 0) {
-                res++;
+        if(k==1) return 'a';
+
+        int n = operations.length;
+        long len=1;
+        long newK=-1;
+        int opType=-1;
+
+        for(int i=0;i<n;i++){
+            len*=2;
+            if(len>=k){
+                opType=operations[i];
+                newK = k-len/2;
+                break;
             }
         }
-        return (char) ('a' + (res % 26));
+
+        char ch = kthCharacter(newK,operations);
+        if(opType==0) return ch;
+        return (char)(ch=='z'?'a':ch+1);
     }
 }
