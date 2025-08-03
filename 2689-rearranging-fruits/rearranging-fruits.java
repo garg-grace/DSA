@@ -1,37 +1,34 @@
 class Solution {
-    public long minCost(final int[] basket1, final int[] basket2) {
-        final int n = basket1.length;
-        final Map<Integer, Integer> counts = new HashMap<>();
+    public long minCost(int[] basket1, int[] basket2) {
+        Map<Integer,Integer> mp = new HashMap<>();
+        int minEle = Integer.MAX_VALUE;
 
-        for(int i = 0; i < n; ++i)
-            counts.put(basket1[i], counts.getOrDefault(basket1[i], 0) + 1);
-
-        for(int i = 0; i < n; ++i)
-            counts.put(basket2[i], counts.getOrDefault(basket2[i], 0) - 1);
-
-        final List<Integer> swaps = new ArrayList<>();
-
-        int min = Integer.MAX_VALUE;
-
-        for(final Map.Entry<Integer, Integer> entry : counts.entrySet()) {
-            final int num = entry.getKey(), count = entry.getValue();
-
-            if(count % 2 > 0)
-                return -1;
-
-            min = Math.min(num, min);
-
-            for(int i = 0; i < Math.abs(count) / 2; ++i)
-                swaps.add(num);
+        for(int ele : basket1){
+            mp.put(ele,mp.getOrDefault(ele,0)+1);
+            minEle=Math.min(minEle,ele);
         }
 
-        Collections.sort(swaps);
+        for(int ele : basket2){
+            mp.put(ele,mp.getOrDefault(ele,0)-1);
+            minEle=Math.min(minEle,ele);
+        }
+        
+        List<Integer> list = new ArrayList<>();
+        for(Map.Entry<Integer,Integer> entry : mp.entrySet()){
+            int cost = entry.getKey();
+            int freq = Math.abs(entry.getValue());
+            if(freq==0) continue;
+            if(freq%2!=0) return -1;
 
-        long result = 0;
+            for(int c=1;c<=freq/2;c++) list.add(cost);
+        }
 
-        for(int i = 0; i < swaps.size() / 2; ++i)
-            result += Math.min(swaps.get(i), min * 2);
+        long res=0;
+        Collections.sort(list);
+        for(int i=0;i<list.size()/2;i++){
+            res = res+Math.min(list.get(i),minEle*2);
+        }
 
-        return result;
+        return res;
     }
 }
